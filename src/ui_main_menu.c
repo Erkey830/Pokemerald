@@ -767,9 +767,9 @@ static void CreatePartyMonIcons()
     s16 x = ICON_BOX_1_START_X;
     s16 y = ICON_BOX_1_START_Y;
     struct Pokemon *mon;
-    LoadMonIconPalettes();
     for(i = 0; i < gPlayerPartyCount; i++)
     {   
+        mon = &gPlayerParty[i];
         switch (i) // choose position for each icon
         {
             case 0:
@@ -798,12 +798,16 @@ static void CreatePartyMonIcons()
                 break;
         }
 
-#ifdef RHH_EXPANSION
-            sMainMenuDataPtr->iconMonSpriteIds[i] = CreateMonIcon(GetMonData(&gPlayerParty[i], MON_DATA_SPECIES_OR_EGG), SpriteCB_MonIcon, x, y - 2, 0, GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY));
-#else
-            sMainMenuDataPtr->iconMonSpriteIds[i] = CreateMonIcon(GetMonData(&gPlayerParty[i], MON_DATA_SPECIES_OR_EGG), SpriteCB_MonIcon, x, y - 2, 0, GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY), TRUE);
-#endif
+        sMainMenuDataPtr->iconMonSpriteIds[i] = CreateMonIcon(GetMonData(&gPlayerParty[i], MON_DATA_SPECIES_OR_EGG), SpriteCB_MonIcon, x, y, 0, GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY));
 
+        //En general, para la creación de icons debemos de usar SetMonIconPalette, que hace lo mismo que vamos a hacer nosotros, pero "automáticamente": asigna un índice a cada paleta según se use o no. En algunas interfaces que ya hay unos sprites cargados, debemos cargar nuestros iconos a partir de cierto índice que sepamos que esté libre (que no lo use ningún sprite).
+        LoadCompressedPalette(GetMonSpritePalFromSpeciesAndPersonality(GetMonData(&gPlayerParty[i], MON_DATA_SPECIES_OR_EGG), GetMonData(&gPlayerParty[i], MON_DATA_IS_SHINY), GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY)), //Cargamos la paleta del Pokémon a partir de: a)Qué especie es. b)Si es shiny. c)Su personalidad (para si es hembra o no).
+                                                                       OBJ_PLTT_ID(4 + i),//¿Dónde la cargamos? Pues según la paleta que le vayamos a asignar después con oam.paletteNum -> tal (Así se unen el sprite con su paleta).
+                                                                       PLTT_SIZE_4BPP); //¿Qué tamaño (size) tiene la paleta? El 99% de las veces, PLTT_SIZE_4BPP.
+
+        //SetMonIconPalette(mon, &gSprites[sMainMenuDataPtr->iconMonSpriteIds[i]], i);
+        gSprites[sMainMenuDataPtr->iconMonSpriteIds[i]].oam.paletteNum = 4 + i; // Esto indica que para cada sprite (=iconMonSpriteIds), se le asocia una paleta. Como i va subiendo según el número de Pokémon que tengas en el equipo (for(i = 0; i < gPlayerPartyCount; i++)), para el Pokémon, por ejemplo, nº 2, se le cargará la paleta 4 + 2 = 6 (puedes comprobarlo en mGBA, en herramientas->sprites->nº de paleta).
+        //SetMonIconPalette(mon, &gSprites[sMainMenuDataPtr->iconMonSpriteIds[i]], i); Esto sería correcto en la mayoría de interfaces.
         gSprites[sMainMenuDataPtr->iconMonSpriteIds[i]].oam.priority = 0;
 
         if (GetHPEggCyclePercent(i) == 0)
