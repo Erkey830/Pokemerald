@@ -358,6 +358,7 @@ SECTIONS {
         src/gym_leader_rematch.o(.text);
         src/battle_transition_frontier.o(.text);
         src/international_string_util.o(.text);
+        src/ui_birch_case.o(.text);
         src/pokemon_sprite_visualizer.o(.text);
         src/ui_startmenu_full.o(.text);
         src/expansion_intro.o(.text);
@@ -727,6 +728,7 @@ SECTIONS {
         data/mystery_gift.o(.rodata);
         src/m4a_tables.o(.rodata);
         data/sound_data.o(.rodata);
+        src/ui_birch_case.o(.rodata);
         src/pokemon_sprite_visualizer.o(.rodata);
         src/ui_startmenu_full.o(.rodata);
         src/expansion_intro.o(.rodata);
