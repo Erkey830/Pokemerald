@@ -623,6 +623,8 @@ static void CreatePartyMonIcons()
     struct Pokemon *mon;
     for(i = 0; i < gPlayerPartyCount; i++)
     {   
+        mon = &gPlayerParty[i];
+
         switch (i) // choose position for each icon
         {
             case 0:
@@ -658,6 +660,7 @@ static void CreatePartyMonIcons()
 #endif
 
         gSprites[sStartMenuDataPtr->iconMonSpriteIds[i]].oam.priority = 0;
+        SetMonIconPalette(mon, &gSprites[sStartMenuDataPtr->iconMonSpriteIds[i]], i);
 
         if (GetHPEggCyclePercent(i) == 0)
         {
