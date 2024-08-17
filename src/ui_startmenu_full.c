@@ -621,7 +621,6 @@ static void CreatePartyMonIcons()
     s16 x = ICON_BOX_1_START_X;
     s16 y = ICON_BOX_1_START_Y;
     struct Pokemon *mon;
-    LoadMonIconPalettes();
     for(i = 0; i < gPlayerPartyCount; i++)
     {   
         switch (i) // choose position for each icon
